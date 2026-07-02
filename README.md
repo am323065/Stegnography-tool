@@ -20,6 +20,7 @@ This project implements **LSB (Least Significant Bit)** Steganography. Every pix
 | 🔐 **Module 1 — Encode** | LSB Encoding logic to hide message in image pixels | **Gauri, Aman & Team** |
 | 🔓 **Module 2 — Decode** | LSB Decoding logic to extract message from image pixels | **Veera, Shreyaj, Vatsal & Team** |
 | 🔒 **Module 3 — Encryption** | Password-based encryption & decryption of messages | **Arpita & Rakshita** |
+| 🔒 **Encryption Research** | Independent encryption module research & implementation | **Aftab** |
 | 🎨 **UI Design** | Streamlit web interface, styling, and layout | **Khushi & Madhuri** |
 | 🖼️ **Sample Images** | Test PNG images of various resolutions | **Archana** |
 | 📋 **Requirements** | Python dependency management | **Muskan** |

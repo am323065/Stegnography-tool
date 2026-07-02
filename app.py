@@ -229,6 +229,7 @@ def main():
     🔐 <b>Encode:</b> Gauri, Aman & Team<br>
     🔓 <b>Decode:</b> Veera, Shreyaj, Vatsal & Team<br>
     🔒 <b>Encryption:</b> Arpita & Rakshita<br>
+    🔒 <b>Encryption Research:</b> Aftab<br>
     🎨 <b>UI:</b> Khushi & Madhuri<br>
     🖼️ <b>Images:</b> Archana<br>
     📋 <b>Requirements:</b> Muskan<br>
@@ -314,7 +315,7 @@ def main():
                             # STEP A: If password given, encrypt first (Arpita & Team's Module 3)
                             if password.strip():
                                 message_to_hide = encrypt_message(secret_message, password)
-                                st.info("🔒 Message encrypted by Arpita & Team's encryption module.")
+                                st.info("🔒 Message encrypted successfully before hiding.")
                             else:
                                 message_to_hide = secret_message
 
