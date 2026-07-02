@@ -2,9 +2,6 @@
 Module 3 - Encryption Layer
 Steganography Tool
 
-Authors: Arpita and Team
-Project: Steganography Tool
-
 This module provides optional password-based encryption and decryption
 for secret messages before they are embedded into an image.
 

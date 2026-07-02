@@ -1,55 +1,19 @@
-"""
-Steganography Tool - Main Application
-======================================
-
-Integrated by: [Your Name / Lead]
-
-Module Credits:
-- Module 1 (LSB Encoding)  : Gauri
-- Module 2 (LSB Decoding)  : Veera
-- Module 3 (Encryption)    : Arpita and Team
-- UI Design                : Khushi and Madhuri
-- Sample Images            : Archana
-- Additional Decode Work   : Shreyaj, Vatsal
-
-Project: Steganography Tool
-Organization: UpToSkills
-
-Description:
-This app integrates all intern modules into a single working
-Streamlit application. Users can hide a secret message inside
-a PNG/BMP image (Encode Mode) and retrieve it later (Decode Mode).
-Optionally, the message can be encrypted with a password before hiding.
-"""
-
 import io
 import streamlit as st
 from PIL import Image
 
-# =========================================================================
-# IMPORTING INTERN MODULES
-# =========================================================================
-# Gauri's Encode Module (Module 1)
 from encode import text_to_binary, encode_message, calculate_capacity
-
-# Veera's Decode Module (Module 2)
 from decode import decode_message
-
-# Arpita and Team's Encryption Module (Module 3)
 from encryption import encrypt_message, decrypt_message
 
-# =========================================================================
-# PAGE CONFIGURATION
-# =========================================================================
+
 st.set_page_config(
     page_title="Steganography Tool",
     page_icon="🕵️",
     layout="wide"
 )
 
-# =========================================================================
-# STYLING (UI by Khushi and Madhuri)
-# =========================================================================
+# UI styling by Khushi and Madhuri
 st.markdown("""
 <style>
 
@@ -167,12 +131,9 @@ hr {
 """, unsafe_allow_html=True)
 
 
-# =========================================================================
-# MAIN APP
-# =========================================================================
 def main():
 
-    # ---- Header (UI by Khushi and Madhuri) ----
+
     st.markdown("""
     <h1 style="text-align:center; color:#1E3A8A; margin-bottom:10px;">
     🕵️ Steganography Tool
@@ -193,7 +154,7 @@ def main():
 
     st.markdown("---")
 
-    # ---- Sidebar Navigation (UI by Khushi and Madhuri) ----
+
     st.sidebar.title("📌 Navigation")
     mode = st.sidebar.radio(
         "Select Mode",
@@ -237,9 +198,7 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # =========================================================================
-    # ENCODE MODE
-    # =========================================================================
+    # Encode Mode
     if mode == "🔐 Encode Mode":
         st.header("🔐 Encode Secret Message")
         st.caption("Upload a carrier image and type a secret text message to hide it inside pixel data.")
@@ -249,8 +208,7 @@ def main():
         with col1:
             st.subheader("1. Carrier Image Setup")
 
-            # Image uploader - PNG and BMP only (block JPEG with warning)
-            # UI by Khushi and Madhuri
+
             uploaded_file = st.file_uploader(
                 "Upload a PNG or BMP carrier image",
                 type=["png", "bmp", "jpg", "jpeg"],
@@ -262,7 +220,7 @@ def main():
             if uploaded_file is not None:
                 file_ext = uploaded_file.name.split('.')[-1].lower()
 
-                # Block JPEG uploads with clear warning (UI by Khushi and Madhuri)
+                # Block JPEG uploads
                 if file_ext in ["jpg", "jpeg"]:
                     st.error("❌ JPEG format blocked! JPEG compression destroys the hidden bits. Please upload a PNG or BMP image.")
                 else:
@@ -274,7 +232,7 @@ def main():
                             use_container_width=True
                         )
 
-                        # Show image capacity using Gauri's calculate_capacity function
+
                         capacity = calculate_capacity(carrier_image)
                         char_capacity = capacity // 8
                         st.caption(f"📦 This image can store up to **{char_capacity} characters**")
@@ -285,19 +243,19 @@ def main():
         with col2:
             st.subheader("2. Secret Message & Security")
 
-            # Multiline text box for secret message (UI by Khushi and Madhuri)
+
             secret_message = st.text_area(
                 "Secret Text Message",
                 placeholder="Type the confidential text message you wish to hide...",
                 height=150
             )
 
-            # Optional password field — connects to Arpita's encryption module
+
             password = st.text_input(
                 "Encryption Password (Optional)",
                 type="password",
                 placeholder="Enter password to encrypt message before hiding",
-                help="If provided, message will be encrypted using Arpita & Team's encryption module before embedding."
+                help="Leave blank to hide without encryption."
             )
 
             st.subheader("3. Action")
@@ -312,31 +270,31 @@ def main():
                     try:
                         with st.spinner("Encoding your secret message..."):
 
-                            # STEP A: If password given, encrypt first (Arpita & Team's Module 3)
+
                             if password.strip():
                                 message_to_hide = encrypt_message(secret_message, password)
                                 st.info("🔒 Message encrypted successfully before hiding.")
                             else:
                                 message_to_hide = secret_message
 
-                            # STEP B: Convert message to binary (Gauri's Module 1)
+
                             binary_message = text_to_binary(message_to_hide)
 
-                            # STEP C: Check capacity
+
                             capacity = calculate_capacity(carrier_image)
                             if len(binary_message) > capacity:
                                 st.error("❌ Message is too large for this image. Please use a larger image or a shorter message.")
                                 return
 
-                            # STEP D: Encode message into image (Gauri's Module 1)
+
                             encoded_image = encode_message(carrier_image, binary_message)
 
-                            # STEP E: Save encoded image to bytes for download
+
                             buf = io.BytesIO()
                             encoded_image.save(buf, format="PNG")
                             stego_bytes = buf.getvalue()
 
-                            # Store in session state
+
                             st.session_state["stego_bytes"] = stego_bytes
                             st.session_state["stego_name"] = f"stego_{uploaded_file.name.rsplit('.', 1)[0]}.png"
                             st.session_state["encode_success"] = True
@@ -346,7 +304,7 @@ def main():
                     except Exception as e:
                         st.error(f"❌ Encoding failed: {e}")
 
-        # Show download button only after successful encode (UI by Khushi and Madhuri)
+
         if st.session_state.get("encode_success") and "stego_bytes" in st.session_state:
             st.markdown("---")
             st.subheader("📥 Download Stego-Image")
@@ -358,16 +316,14 @@ def main():
                 mime="image/png"
             )
 
-    # =========================================================================
-    # DECODE MODE
-    # =========================================================================
+    # Decode Mode
     else:
         st.header("🔓 Decode Secret Message")
         st.caption("Upload an encoded PNG/BMP image to reveal the hidden message.")
 
         st.info("📩 Upload the encoded PNG/BMP image to retrieve the hidden message.")
 
-        # UI by Khushi and Madhuri
+
         uploaded_file = st.file_uploader(
             "Upload Stego Image",
             type=["png", "bmp", "jpg", "jpeg"],
@@ -390,7 +346,7 @@ def main():
                     use_container_width=True
                 )
 
-                # Optional password for decryption (connects to Arpita's Module 3)
+
                 password = st.text_input(
                     "Password (Leave blank if no encryption was used)",
                     type="password",
@@ -407,12 +363,12 @@ def main():
                     try:
                         with st.spinner("Extracting hidden message..."):
 
-                            # STEP A: Extract hidden message from image (Veera's Module 2)
+
                             hidden_message = decode_message(image)
 
                         if hidden_message:
 
-                            # STEP B: If password given, decrypt using Arpita's Module 3
+
                             if password.strip():
                                 try:
                                     final_message = decrypt_message(hidden_message, password)

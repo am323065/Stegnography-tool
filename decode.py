@@ -1,19 +1,38 @@
-"""
-Module 2 - LSB Decoding
-Steganography Tool
-
-Author: Veera
-Project: Steganography Tool
-
-Purpose:
-Extract a hidden message from a stego PNG/BMP image using
-Least Significant Bit (LSB) decoding.
-"""
-
 from PIL import Image
+import os
 
 # Must be identical to encode.py
 END_MARKER = "#####"
+
+
+def load_image(image_path):
+    """
+    Load the encoded image and convert it to RGB.
+
+    Args:
+        image_path (str): Path to encoded image.
+
+    Returns:
+        Image: Pillow Image object.
+    """
+
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"Image not found: {image_path}")
+
+    try:
+        image = Image.open(image_path)
+
+        if image.mode != "RGB":
+            image = image.convert("RGB")
+
+        # print("Image loaded successfully!")
+        # print(f"Image Size : {image.size}")
+        # print(f"Image Mode : {image.mode}")
+
+        return image
+
+    except Exception as e:
+        raise Exception(f"Unable to load image.\n{e}")
 
 
 def extract_binary_data(image):
@@ -75,7 +94,9 @@ def binary_to_text(binary_data):
         if decoded.endswith(END_MARKER):
             return decoded[:-len(END_MARKER)]
 
-    return ""
+    raise ValueError(
+        "No hidden message found or image is corrupted."
+    )
 
 
 def decode_message(image):
