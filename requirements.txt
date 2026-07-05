@@ -1,25 +1,4 @@
-# ============================================================
-# Requirements File
-# Steganography Tool — UpToSkills Intern Project
-#
-# Author: Muskan
-#
-# Description:
-# This file lists all the Python libraries required to run
-# the Steganography Tool. Install them using the command:
-#
-#     pip install -r requirements.txt
-#
-# ============================================================
-
-# Image processing — used for reading and writing pixel data
-Pillow
-
-# Web UI framework — used to build the interactive app interface
+pillow
 streamlit
-
-# Password-based encryption and decryption of secret messages
 cryptography
-
-# Numerical operations on image arrays (optional, for performance)
 numpy

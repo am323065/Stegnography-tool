@@ -1,30 +1,19 @@
-from PIL import Image, UnidentifiedImageError
+# Gauri + Aman & Team
+
+from PIL import Image
 import os
 
 # End marker to identify end of secret message
 END_MARKER = "#####"
 
 def load_image(image_path):
-    if not os.path.exists(image_path):
-        raise FileNotFoundError(f"Image not found: {image_path}")
-
-    try:
-        image = Image.open(image_path)
-
-        if image.mode != "RGB":
-            image = image.convert("RGB")
-
-        print("Image loaded successfully!")
-        print("Image Size:", image.size)
-        print("Image Mode:", image.mode)
-
-        return image
-
-    except UnidentifiedImageError:
-        raise ValueError("Invalid or corrupted image file.")
-
-    except Exception as e:
-        raise Exception(f"Unable to load image.\n{e}")
+    image = Image.open(image_path)
+    # Convert to RGB to ensure we have exactly 3 channels (R, G, B)
+    image = image.convert("RGB")
+    print("Image loaded successfully!")
+    print("Image Size:", image.size)
+    print("Image Mode:", image.mode)
+    return image
 
 def text_to_binary(message):
     message = message + END_MARKER
@@ -93,42 +82,18 @@ def encode_message(image, binary_message):
 
 def main():
     # 1. Load Image
-    import random
-
-    sample_folder = "sample_images"
-
-    image_files = [
-        file for file in os.listdir(sample_folder)
-        if file.lower().endswith((".png", ".bmp"))
-    ]
-
-    if not image_files:
-        print("❌ No PNG/BMP images found in the sample_images folder.")
-        return
-
-    selected_image = random.choice(image_files)
-    image_path = os.path.join(sample_folder, selected_image)
-
-    print(f"\nSelected Image : {selected_image}")
+    image_path = "sample_images/sample_image1.png"
     image = load_image(image_path)
     
-    # 2. Display Image Capacity
-    capacity = calculate_capacity(image)
-    character_capacity = capacity // 8
-
-    print("\n========== IMAGE CAPACITY ==========")
-    print(f"Image can store : {capacity} bits")
-    print(f"Approx. Capacity: {character_capacity} characters")
-
-    # 3. Get Secret Message
-    secret_message = input("\nEnter your secret message: ").strip()
-
-    if not secret_message:
-        print("❌ Secret message cannot be empty.")
-        return
-
+    # 2. Get Secret Message
+    secret_message = input("\nEnter your secret message: ")
     binary_message = text_to_binary(secret_message)
     print("\nTotal Bits to hide:", len(binary_message))
+    
+    # 3. Check Capacity
+    capacity = calculate_capacity(image)
+    print("\n========== IMAGE CAPACITY ==========")
+    print("Image can store", capacity, "bits")
     
     if len(binary_message) > capacity:
         print("\n❌ ERROR: Message is too large for this image.")
@@ -143,20 +108,15 @@ def main():
     
     # 5. Save Encoded Image
     output_dir = "output"
-
     if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
+        os.makedirs(output_dir) # Creates the folder if it doesn't exist
+        
     output_path = os.path.join(output_dir, "encoded_image.png")
     encoded_image.save(output_path)
     
-    print("\n====================================")
-    print(" Encoding Completed Successfully ")
-    print("====================================\n\n")
-    print(f"Input Image  : {image_path}\n")
-    print(f"Output Image : {output_path}\n\n")
-    print("Secret message hidden successfully.")
-    print("====================================")
+    print(f"\n🎉 Encoding Complete!")
+    print(f"✅ Encoded image saved at: {output_path}")
+    print("You can now share this image. The message is secretly hidden inside it!")
 
 if __name__ == "__main__":
     main()

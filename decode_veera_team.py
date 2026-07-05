@@ -1,3 +1,5 @@
+# Veera + Shreyaj, Vatsal & Team
+
 from PIL import Image
 import os
 
@@ -115,3 +117,32 @@ def decode_message(image):
     secret_message = binary_to_text(binary_data)
 
     return secret_message
+
+
+def main():
+
+    # Load Encoded Image
+    image_path = "output/encoded_image.png"
+
+    try:
+
+        image = load_image(image_path)
+
+        # print("\nExtracting hidden message...")
+
+        secret_message = decode_message(image)
+
+        print("\n====================================")
+        print(" Hidden Message Recovered ")
+        print("====================================\n")
+        print(secret_message)
+        print("\n====================================")
+
+    except Exception as error:
+
+        print("\nERROR")
+        print(f"❌ {error}")
+
+
+if __name__ == "__main__":
+    main()
