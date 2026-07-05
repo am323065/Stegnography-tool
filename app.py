@@ -1,51 +1,63 @@
-"""
-module 3 ui
-khushi + madhuri
-"""
-import io
 import streamlit as st
 from PIL import Image
+import io
 
+# Import clean integrated modules
 from encode_gauri_team import text_to_binary, encode_message, calculate_capacity
 from decode_veera_team import decode_message
 from encryption_arpita_team import encrypt_message, decrypt_message
 
-
-
+# Page Configuration
 st.set_page_config(
     page_title="Steganography Tool",
     page_icon="🕵️",
     layout="wide"
 )
 
-# UI → Khushi & Madhuri
 st.markdown("""
 <style>
 
+/* ===========================
+   Main App Background
+=========================== */
 .stApp {
     background-color: #D9F3FF;
 }
 
+/* Ensure all text is dark and visible on the light blue background */
 .stApp, .stApp p, .stApp span, .stApp label,
 .stApp div, .stApp li, .stApp small {
     color: #0F172A !important;
 }
 
-h1 {
-    color: #1E3A8A !important;
-    font-weight: 700;
-}
-h2, h3, h4 {
-    color: #1D4ED8 !important;
-}
-
+/* ========================
+   Sidebar
+=========================== */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #1E3A8A, #172554);
 }
+
+/* Sidebar Text */
 [data-testid="stSidebar"] * {
     color: white !important;
 }
 
+/* ===========================
+   Main Title
+=========================== */
+h1 {
+    color: #1E3A8A !important;
+    font-weight: 700;
+}
+
+/* Headers */
+h2, h3 {
+    color: #2563EB !important;
+}
+
+/* ===========================
+   Buttons
+=========================== */
 .stButton > button {
     background-color: #2563EB;
     color: white !important;
@@ -55,11 +67,15 @@ h2, h3, h4 {
     padding: 0.5rem 1rem;
     transition: 0.3s;
 }
+
 .stButton > button:hover {
     background-color: #1D4ED8;
     color: white !important;
 }
 
+/* ===========================
+   Download Button
+=========================== */
 .stDownloadButton > button {
     background-color: #16A34A;
     color: white !important;
@@ -67,11 +83,15 @@ h2, h3, h4 {
     border: none;
     font-weight: bold;
 }
+
 .stDownloadButton > button:hover {
     background-color: #15803D;
     color: white !important;
 }
 
+/* ===========================
+   Text Input
+=========================== */
 .stTextInput input {
     background-color: #ffffff !important;
     color: #0F172A !important;
@@ -83,6 +103,9 @@ h2, h3, h4 {
     font-weight: 600;
 }
 
+/* ===========================
+   Text Area
+=========================== */
 .stTextArea textarea {
     background-color: #ffffff !important;
     color: #0F172A !important;
@@ -94,11 +117,15 @@ h2, h3, h4 {
     font-weight: 600;
 }
 
+/* Placeholder text */
 .stTextInput input::placeholder,
 .stTextArea textarea::placeholder {
     color: #64748B !important;
 }
 
+/* ===========================
+   File Uploader
+=========================== */
 [data-testid="stFileUploader"] {
     background-color: #ffffff;
     border: 2px dashed #2563EB;
@@ -109,15 +136,20 @@ h2, h3, h4 {
     color: #0F172A !important;
 }
 
+/* Selectbox / Radio */
 .stRadio label, .stCheckbox label {
     color: #0F172A !important;
     font-weight: 500;
 }
 
+/* Caption / small text */
 .stCaption, [data-testid="stCaptionContainer"] {
     color: #334155 !important;
 }
 
+/* ===========================
+   Info Boxes
+=========================== */
 .stAlert {
     border-radius: 10px;
 }
@@ -125,14 +157,19 @@ h2, h3, h4 {
     color: inherit !important;
 }
 
+/* ===========================
+   Horizontal Line
+=========================== */
 hr {
-    border: 1px solid #CBD5E1;
+    border: 1px solid #D1D5DB;
 }
-
+            
+/* Hide "Press Enter to apply" helper text */
 [data-testid="InputInstructions"] {
     display: none !important;
-}
+}            
 
+/* Subheader markdown text */
 [data-testid="stMarkdownContainer"] p {
     color: #0F172A !important;
 }
@@ -140,8 +177,8 @@ hr {
 </style>
 """, unsafe_allow_html=True)
 
-
 def main():
+    # Header Section
     st.markdown("""
     <h1 style="text-align:center; color:#1E3A8A; margin-bottom:10px;">
     🕵️ Steganography Tool
@@ -162,6 +199,7 @@ def main():
 
     st.markdown("---")
 
+    # Sidebar Navigation with Encode and Decode Mode Buttons
     st.sidebar.title("📌 Navigation")
     mode = st.sidebar.radio(
         "Select Mode",
@@ -169,7 +207,7 @@ def main():
         index=0,
         help="Switch between Encode and Decode modes."
     )
-
+    
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 💡 Suggestions")
     st.sidebar.markdown("""
@@ -178,7 +216,7 @@ def main():
     padding:15px;
     border-radius:10px;
     line-height:1.0;
-    font-size:14px;
+    font-size:14px;                                      
     ">
 
     ✔️ <b>Use PNG or BMP Images</b><br><br>
@@ -189,37 +227,41 @@ def main():
 
     </div>
     """, unsafe_allow_html=True)
-
+    # =========================================================================
+    # ENCODE MODE 
+    # =========================================================================
     if mode == "🔐 Encode Mode":
         st.header("🔐 Encode Secret Message")
         st.caption("Upload a carrier image and type a secret text message to hide it inside pixel data.")
-
+        
         col1, col2 = st.columns(2, gap="large")
-
+        
         with col1:
             st.subheader("1. Carrier Image Setup")
 
+            # Image uploader (PNG and BMP only, block JPEG with warning)
             uploaded_file = st.file_uploader(
                 "Upload a PNG or BMP carrier image",
                 type=["png", "bmp", "jpg", "jpeg"],
                 key="encode_uploader",
                 help="PNG and BMP images only. JPEG format is blocked."
             )
-
+            
             carrier_image = None
             if uploaded_file is not None:
                 file_ext = uploaded_file.name.split('.')[-1].lower()
+                # Requirement: Block JPEG uploads with clear warning
                 if file_ext in ["jpg", "jpeg"]:
                     st.error("❌ JPEG format blocked! JPEG compression destroys the hidden bits. Please upload a PNG or BMP image.")
                 else:
                     try:
                         carrier_image = Image.open(uploaded_file).convert("RGB")
                         st.image(
-                            carrier_image,
+                            carrier_image, 
                             caption=f"Carrier Image ({carrier_image.width} × {carrier_image.height} px)",
                             use_container_width=True
                         )
-                        capacity = calculate_capacity(carrier_image)  # Gauri
+                        capacity = calculate_capacity(carrier_image)
                         char_capacity = capacity // 8
                         st.caption(f"📦 This image can store up to **{char_capacity} characters**")
                     except Exception as img_err:
@@ -227,22 +269,25 @@ def main():
 
         with col2:
             st.subheader("2. Secret Message & Security")
+            # Multiline text box for secret message
             secret_message = st.text_area(
                 "Secret Text Message",
                 placeholder="Type the confidential text message you wish to hide...",
                 height=150
             )
-
+            
+            # Password field for Module 3 encryption flow
             password = st.text_input(
                 "Encryption Password (Optional)",
                 type="password",
                 placeholder="Enter password if encryption is required",
-                help="Leave blank to hide without encryption."
+                help="Optional password field for encryption flow."
             )
-
+            
             st.subheader("3. Action")
+            # Encode button
             encode_btn = st.button("🔐 Encode Message Into Image", type="primary")
-
+            
             if encode_btn:
                 if carrier_image is None:
                     st.warning("⚠️ Please upload a valid PNG or BMP carrier image first.")
@@ -250,35 +295,33 @@ def main():
                     st.warning("⚠️ Please enter a secret message to hide.")
                 else:
                     try:
-                        with st.spinner("Encoding your secret message..."):
-
+                        with st.spinner("Encoding..."):
                             if password.strip():
-                                message_to_hide = encrypt_message(secret_message, password)  # encryption_arpita.py
+                                message_to_hide = encrypt_message(secret_message, password)
                             else:
                                 message_to_hide = secret_message
-
-                            binary_message = text_to_binary(message_to_hide)  # encode_gauri.py
-
-                            capacity = calculate_capacity(carrier_image)  # encode_gauri.py
+                            
+                            binary_message = text_to_binary(message_to_hide)
+                            capacity = calculate_capacity(carrier_image)
+                            
                             if len(binary_message) > capacity:
-                                st.error("❌ Message is too large for this image. Please use a larger image or a shorter message.")
+                                st.error("❌ Message too large for image capacity.")
                                 return
-
-                            encoded_image = encode_message(carrier_image, binary_message)  # encode_gauri.py
-
+                                
+                            encoded_image = encode_message(carrier_image, binary_message)
+                            
                             buf = io.BytesIO()
                             encoded_image.save(buf, format="PNG")
                             stego_bytes = buf.getvalue()
-
+                            
                             st.session_state["stego_bytes"] = stego_bytes
                             st.session_state["stego_name"] = f"stego_{uploaded_file.name.rsplit('.', 1)[0]}.png"
                             st.session_state["encode_success"] = True
-
-                        st.success("🎉 Encoding completed successfully! Your stego-image is ready for download.")
-
+                            st.success("🎉 Encoding completed successfully! Your stego-image is ready for download.")
                     except Exception as e:
                         st.error(f"❌ Encoding failed: {e}")
 
+        # Requirement: Only show the download button after a successful encode (Don't show on load!)
         if st.session_state.get("encode_success") and "stego_bytes" in st.session_state:
             st.markdown("---")
             st.subheader("📥 Download Stego-Image")
@@ -290,6 +333,9 @@ def main():
                 mime="image/png"
             )
 
+    # =========================================================================
+    # DECODE MODE 
+    # =========================================================================
     else:
         st.header("🔓 Decode Secret Message")
         st.caption("Upload an encoded PNG/BMP image to reveal the hidden message.")
@@ -310,6 +356,7 @@ def main():
                 st.error("❌ JPEG format is not recommended. Hidden data may be lost because of JPEG compression.")
 
             else:
+
                 image = Image.open(uploaded_file).convert("RGB")
 
                 st.image(
@@ -318,49 +365,41 @@ def main():
                     use_container_width=True
                 )
 
-                is_encrypted = st.checkbox("🔐 Is this message encrypted?")
+                password = st.text_input(
+                    "Password (Optional)",
+                    type="password",
+                    key="decode_password"
+                )
 
-                password = ""
-
-                if is_encrypted:
-                    password = st.text_input(
-                        "Decryption Password",
-                        type="password",
-                        key="decode_password"
-                    )
-
-                decode_btn = st.button("🔓 Decode Message", type="primary")
+                decode_btn = st.button(
+                    "🔓 Decode Message",
+                    type="primary"
+                )
 
                 if decode_btn:
                     try:
-                        with st.spinner("Extracting hidden message..."):
-                            hidden_message = decode_message(image)  # decode_veera.py
+                        with st.spinner("Decoding..."):
+                            hidden_message = decode_message(image)
 
                         if hidden_message:
                             looks_encrypted = hidden_message.startswith("gAAAAA")
 
-                            if looks_encrypted and not is_encrypted:
-                                st.error("🔐 This image contains an encrypted message. Please check **'Is this message encrypted?'** above and enter the password.")
-
-                            elif is_encrypted:
-                                if not password.strip():
-                                    st.error("❌ Please enter the decryption password.")
-                                else:
-                                    try:
-                                        final_message = decrypt_message(hidden_message, password)  # encryption_arpita.py
-                                        st.success("🎉 Hidden message extracted and decrypted successfully!")
-                                        st.text_area("Hidden Message", final_message, height=150)
-                                    except ValueError as ve:
-                                        st.error(f"❌ {ve}")
+                            if looks_encrypted and not password.strip():
+                                st.error("🔐 This image contains an encrypted message. Please enter the password to decrypt.")
+                            elif password.strip():
+                                try:
+                                    final_message = decrypt_message(hidden_message, password)
+                                    st.success("🎉 Hidden message extracted successfully!")
+                                    st.text_area("Hidden Message", final_message, height=150)
+                                except ValueError as ve:
+                                    st.error(f"❌ {ve}")
                             else:
                                 st.success("🎉 Hidden message extracted successfully!")
                                 st.text_area("Hidden Message", hidden_message, height=150)
                         else:
                             st.warning("⚠️ No hidden message was found in this image.")
-
                     except Exception as e:
                         st.error(f"❌ Decoding failed: {e}")
-
 
 if __name__ == "__main__":
     main()
